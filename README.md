@@ -143,6 +143,12 @@ For bugs and feature requests please use the GitHub issue tracker. I haven't lim
 the library to any android api versions, but it might be, that it doesn't work on 
 very old versions, so please feel free to tell me via an issue, I will then try to fix it.
 
+## Leaky Popup
+
+When the popup is shown and the device is rotate, it causes an exception to be thrown.
+This is nothing really bad, but you can prevent that exception by calling `SwipeDismissList.discardUndo()`
+in the `onStop` method of your activity.
+
 
 Contact
 -------
