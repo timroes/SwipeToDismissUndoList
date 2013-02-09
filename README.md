@@ -19,10 +19,12 @@ as an Android library to your project.
 To use the list create a regular `ListView` (e.g. via a `ListActivity`) and wrap
 it up in the `SwipeDismissList` of this lib:
 
-    ListView listView = // ... (findById or getListView)
-	SwipeDismissList.OnDismissCallback callback = // .. see below
-	UndoMode mode = // .. see below
-    SwipeDismissList swipeList = new SwipeDismissList(listView, callback, mode);
+```java
+ListView listView = // ... (findById or getListView)
+SwipeDismissList.OnDismissCallback callback = // .. see below
+UndoMode mode = // .. see below
+SwipeDismissList swipeList = new SwipeDismissList(listView, callback, mode);
+```
 
 You would normally want to do that in your `onCreate` method.
 
@@ -31,32 +33,36 @@ You would normally want to do that in your `onCreate` method.
 The second parameter to the constructor of `SwipeDismissList` is an `OnDismissCallback`.
 You must implement that, to handle the deletion of elements:
 
-    SwipeDismissList.OnDismissCallback = new SwipeDismissList.OnDismissCallback() {
-        public SwipeDismissList.Undoable onDismiss(ListView listView, int position) {
-            // Delete the item from your adapter (sample code):
-            final String itemToDelete = mAdapter.get(position);
-            mAdapter.remove(itemToDelete);
-            return null;
-        }
-    }
+```java
+SwipeDismissList.OnDismissCallback = new SwipeDismissList.OnDismissCallback() {
+	public SwipeDismissList.Undoable onDismiss(ListView listView, int position) {
+		// Delete the item from your adapter (sample code):
+		final String itemToDelete = mAdapter.get(position);
+		mAdapter.remove(itemToDelete);
+		return null;
+	}
+}
+```
 
 If you return `null` from the `onDismiss` method, your deletion won't be undoable.
 To make your deletion undoable, you must return a valid `Undoable` (implementing 
 at least its `undo` method), that restores the element again:
 
-    SwipeDismissList.OnDismissCallback = new SwipeDismissList.OnDismissCallback() {
-        public SwipeDismissList.Undoable onDismiss(ListView listView, final int position) {
-            // Delete the item from your adapter (sample code):
-            final String itemToDelete = mAdapter.get(position);
-            mAdapter.remove(itemToDelete);
-            return new SwipeDismissList.Undoable() {
-                public void undo() {
-                    // Return the item at its previous position again
-                    mAdapter.insert(itemToDelete, position);
-                }
-            };
-        }
-    }
+```java
+SwipeDismissList.OnDismissCallback = new SwipeDismissList.OnDismissCallback() {
+	public SwipeDismissList.Undoable onDismiss(ListView listView, final int position) {
+		// Delete the item from your adapter (sample code):
+		final String itemToDelete = mAdapter.get(position);
+		mAdapter.remove(itemToDelete);
+		return new SwipeDismissList.Undoable() {
+			public void undo() {
+				// Return the item at its previous position again
+				mAdapter.insert(itemToDelete, position);
+			}
+		};
+	}
+}
+```
 
 You can override `getTitle` in the `Undoable` to provide an individual title for 
 the item, that has been deleted. That title will be shown beside the undo button
