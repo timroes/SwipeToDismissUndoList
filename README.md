@@ -14,7 +14,8 @@ Usage
 -----
 
 [Add this project](http://developer.android.com/tools/projects/projects-cmdline.html#ReferencingLibraryProject)
-as an Android library to your project.
+as an Android library to your project. The project should work from API level 3 upwards. If you find
+that this isn't true (might be, that I missed some newer methods), please inform me about that :)
 
 To use the list create a regular `ListView` (e.g. via a `ListActivity`) and wrap
 it up in the `SwipeDismissList` of this lib:
