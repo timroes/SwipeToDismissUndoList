@@ -38,6 +38,8 @@ import com.nineoldandroids.animation.ValueAnimator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import static com.nineoldandroids.view.ViewHelper.setAlpha;
 import static com.nineoldandroids.view.ViewHelper.setTranslationX;
@@ -66,7 +68,7 @@ public final class SwipeDismissList implements View.OnTouchListener {
 	private int mViewWidth = 1; // 1 and not 0 to prevent dividing by zero
 	
 	// Transient properties
-	private List<PendingDismissData> mPendingDismisses = new ArrayList<PendingDismissData>();
+	private SortedSet<PendingDismissData> mPendingDismisses = new TreeSet<PendingDismissData>();
 	private int mDismissAnimationRefCount = 0;
 	private float mDownX;
 	private boolean mSwiping;
@@ -490,14 +492,15 @@ public final class SwipeDismissList implements View.OnTouchListener {
 				--mDismissAnimationRefCount;
 				if (mDismissAnimationRefCount == 0) {
 					// No active animations, process all pending dismisses.
-					// Sort by descending position
-					Collections.sort(mPendingDismisses);
 
-					for (int i = mPendingDismisses.size() - 1; i >= 0; i--) {
+					for(PendingDismissData dismiss : mPendingDismisses) {
 						if(mMode == UndoMode.SINGLE_UNDO) {
 							mUndoActions.clear();
 						}
-						mUndoActions.add(mCallback.onDismiss(mListView, mPendingDismisses.get(i).position));
+						Undoable undoable = mCallback.onDismiss(mListView, dismiss.position);
+						if(undoable != null) {
+							mUndoActions.add(undoable);
+						}
 						mDelayedMsgId++;
 					}
 
