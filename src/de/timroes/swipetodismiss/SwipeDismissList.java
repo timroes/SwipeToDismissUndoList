@@ -19,7 +19,6 @@ import android.content.Context;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
