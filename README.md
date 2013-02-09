@@ -35,7 +35,7 @@ The second parameter to the constructor of `SwipeDismissList` is an `OnDismissCa
 You must implement that, to handle the deletion of elements:
 
 ```java
-SwipeDismissList.OnDismissCallback = new SwipeDismissList.OnDismissCallback() {
+SwipeDismissList.OnDismissCallback callback = new SwipeDismissList.OnDismissCallback() {
 	public SwipeDismissList.Undoable onDismiss(ListView listView, int position) {
 		// Delete the item from your adapter (sample code):
 		final String itemToDelete = mAdapter.get(position);
@@ -50,7 +50,7 @@ To make your deletion undoable, you must return a valid `Undoable` (implementing
 at least its `undo` method), that restores the element again:
 
 ```java
-SwipeDismissList.OnDismissCallback = new SwipeDismissList.OnDismissCallback() {
+SwipeDismissList.OnDismissCallback callback = new SwipeDismissList.OnDismissCallback() {
 	public SwipeDismissList.Undoable onDismiss(ListView listView, final int position) {
 		// Delete the item from your adapter (sample code):
 		final String itemToDelete = mAdapter.get(position);
