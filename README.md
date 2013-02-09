@@ -28,7 +28,7 @@ SwipeDismissList swipeList = new SwipeDismissList(listView, callback, mode);
 
 You would normally want to do that in your `onCreate` method.
 
-### OnDismissCallback
+## OnDismissCallback
 
 The second parameter to the constructor of `SwipeDismissList` is an `OnDismissCallback`.
 You must implement that, to handle the deletion of elements:
@@ -73,25 +73,25 @@ deletion message will be shown in the popup. You can change this message with
 You can return `null` from the `onDismiss` method in general to disable undo on the 
 list or just on special items, you don't want (or cannot) undo.
 
-### setAutoHideDelay
+## setAutoHideDelay
 
 The undo popup will be hidden automatically after some time, after the user has
 touched the screen after the deletion. The delay until it will hide is by default
 5 seconds. You can change that value with the `setAutoHideDelay(int)` method,
 that takes a new delay in milliseconds. 
 
-### UndoMode
+## UndoMode
 
 The undo list can handle multiple undos in three different ways. You define the way
 with the third constructor parameter. If you don't pass in an argument, the default
 mode will be `SwipeDismissList.UndoMode.SINGLE_UNDO`.
 
-## SwipeDismissList.UndoMode.SINGLE_UNDO
+### SwipeDismissList.UndoMode.SINGLE_UNDO
 
 Only the last deletion can be undone. As soon as the user deletes another item
 from the list, this will be undoable, but the previous won't be anymore.
 
-## SwipeDismissList.UndoMode.MULTI_UNDO
+### SwipeDismissList.UndoMode.MULTI_UNDO
 
 This mode is a multilevel undo. When the user deletes an item, while there is
 still the undo popup shown for a previous deleted one, both items will be saved
@@ -111,7 +111,7 @@ the last deletion (the one that will be undone, by a click on undo). If there is
 no individual message for an `Undoable` the default message (`setUndoString(String)`)
 will be shown instead.
 
-## SwipeDismissList.UndoMode.COLLAPSE_UNDO
+### SwipeDismissList.UndoMode.COLLAPSE_UNDO
 
 This mode collapsed multiple undos into one. When the user deletes an item, while
 an undo popup is already shown, the new undo is stored. From now on the user sees
@@ -125,7 +125,7 @@ You can again use `setUndoMultipleString(String)` to set an individual message.
 Also passig `null` is possible, but doesn't make too much sense in that case, since
 the user will only see the last undo messgae, but all deletions will be undone.
 
-### Customizing and Internationalization
+## Customizing and Internationalization
 
 If you want to customize the look and feel, just modify the resources as you like.
 
