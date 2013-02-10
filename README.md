@@ -74,6 +74,14 @@ deletion message will be shown in the popup. You can change this message with
 You can return `null` from the `onDismiss` method in general to disable undo on the 
 list or just on special items, you don't want (or cannot) undo.
 
+### Notification about final delete
+
+If you want to get notified when the user doesn't have a chance to make the undo anymore,
+meaning the popup dialog vanished (see below), just override the `Undoable.discard()`
+method in your `Undoable`. This will be called as soon as the popup dialog vanishes.
+You can e.g. really delete items from the database in that callback, that was just hidden
+beforehand.
+
 ## setAutoHideDelay
 
 The undo popup will be hidden automatically after some time, after the user has

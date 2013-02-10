@@ -166,6 +166,12 @@ public final class SwipeDismissList implements View.OnTouchListener {
 		 * Undoes the deletion.
 		 */
 		public abstract void undo();
+
+		/**
+		 * Will be called when this Undoable won't be able to undo anymore,
+		 * meaning the undo popup has disappeared from the screen.
+		 */
+		public void discard() { }
 		
 	}
 
@@ -619,6 +625,10 @@ public final class SwipeDismissList implements View.OnTouchListener {
 		@Override
 		public void handleMessage(Message msg) {
 			if(msg.what == mDelayedMsgId) {
+				// Call discard on any element
+				for(Undoable undo : mUndoActions) {
+					undo.discard();
+				}
 				mUndoActions.clear();
 				mUndoPopup.dismiss();
 			}
