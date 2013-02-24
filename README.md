@@ -10,6 +10,11 @@ The code is licensed under the [Apache License, Version 2.0](http://www.apache.o
 
 You can view a demonstration of this lib in the [Demonstration App](https://play.google.com/store/apps/details?id=de.timroes.swipetodismiss.demo).
 
+Changes
+-------
+
+*2013-02-24* Properly discard undo items (BUG FIX)
+
 Usage
 -----
 
@@ -81,6 +86,45 @@ meaning the popup dialog vanished (see below), just override the `Undoable.disca
 method in your `Undoable`. This will be called as soon as the popup dialog vanishes.
 You can e.g. really delete items from the database in that callback, that was just hidden
 beforehand.
+
+If you implement the discard method you need to call `SwipeDismissList.discardUndo()` in
+the `onStop` method of your Activity. (See also [Leaky Popup](#leaky-popup) below). Otherwise
+some items might not receive the `discard` call, when e.g. the device is rotated.
+
+### Complete onDismissCallback example
+
+An (pseudo) example of a complete `OnDismissCallback`:
+
+```java
+SwipeDismissList.OnDismissCallback callback = new SwipeDismissList.OnDismissCallback() {
+	// Gets called whenever the user deletes an item.
+	public SwipeDismissList.Undoable onDismiss(ListView listView, final int position) {
+		// Get your item from the adapter (mAdapter being an adapter for MyItem objects)
+		final MyItem deletedItem = mAdapter.getItem(position);
+		// Delete item from adapter
+		mAdapter.remove(deletedItem);
+		// Return an Undoable implementing every method
+		return new SwipeDismissList.Undoable() {
+
+			// Method is called when user undoes this deletion
+			public void undo() {
+				// Reinsert item to list
+				mAdapter.insert(deletedItem, position)
+			}
+			
+			// Return an undo message for that item
+			public String getTitle() {
+				return deletedItem.toString() + " deleted";
+			}
+
+			// Called when user cannot undo the action anymore
+			public void discard() {
+				// Use this place to e.g. delete the item frmo database
+				finallyDeleteFromSomeStorage(deletedItem);
+			}
+		};
+	}
+};
 
 ## setAutoHideDelay
 
@@ -155,8 +199,11 @@ very old versions, so please feel free to tell me via an issue, I will then try 
 ### Leaky Popup
 
 When the popup is shown and the device is rotate, it causes an exception to be thrown.
-This is nothing really bad, but you can prevent that exception by calling `SwipeDismissList.discardUndo()`
-in the `onStop` method of your activity.
+This is nothing really bad, but you can (and should) prevent that exception by calling 
+`SwipeDismissList.discardUndo()` in the `onStop` method of your activity.
+
+If you have implemented the `discard` method (see [above](#notification-about-final-delete)) you 
+*MUST* call this method.
 
 
 Contact
