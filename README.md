@@ -125,6 +125,7 @@ SwipeDismissList.OnDismissCallback callback = new SwipeDismissList.OnDismissCall
 		};
 	}
 };
+```
 
 ## setAutoHideDelay
 
