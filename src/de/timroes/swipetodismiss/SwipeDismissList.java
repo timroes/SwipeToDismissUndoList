@@ -306,6 +306,9 @@ public final class SwipeDismissList implements View.OnTouchListener {
      * Discard all stored undos and hide the undo popup dialog.
      */
     public void discardUndo() {
+        for(Undoable undoable : mUndoActions) {
+            undoable.discard();
+        }
         mUndoActions.clear();
         mUndoPopup.dismiss();
     }
@@ -501,6 +504,9 @@ public final class SwipeDismissList implements View.OnTouchListener {
 
 					for(PendingDismissData dismiss : mPendingDismisses) {
 						if(mMode == UndoMode.SINGLE_UNDO) {
+							for(Undoable undoable : mUndoActions) {
+								undoable.discard();
+							}
 							mUndoActions.clear();
 						}
 						Undoable undoable = mCallback.onDismiss(mListView, dismiss.position);
