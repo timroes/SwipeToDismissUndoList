@@ -119,7 +119,7 @@ SwipeDismissList.OnDismissCallback callback = new SwipeDismissList.OnDismissCall
 
 			// Called when user cannot undo the action anymore
 			public void discard() {
-				// Use this place to e.g. delete the item frmo database
+				// Use this place to e.g. delete the item from database
 				finallyDeleteFromSomeStorage(deletedItem);
 			}
 		};
