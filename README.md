@@ -9,6 +9,7 @@ that is based on [Roman Nurik's SwipeToDismiss sample](https://gist.github.com/r
 The code is licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0).
 
 You can view a demonstration of this lib in the [Demonstration App](https://play.google.com/store/apps/details?id=de.timroes.swipetodismiss.demo).
+The source code of this demonstration app can be found in the [SwipteToDismissUndoDemo](https://github.com/timroes/SwipeToDismissUndoDemo) project.
 
 Changes
 -------
