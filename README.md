@@ -15,6 +15,7 @@ Changes
 -------
 
 *2013-03-22* Added minimum SDK version to manifest
+
 *2013-02-24* Properly discard undo items (BUG FIX)
 
 Usage
