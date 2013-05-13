@@ -63,7 +63,7 @@ public final class SwipeDismissList implements View.OnTouchListener {
 	private long mAnimationTime;
 	
 	// Fixed properties
-	private ListView mListView;
+	private AbsListView mListView;
 	private OnDismissCallback mCallback;
 	private int mViewWidth = 1; // 1 and not 0 to prevent dividing by zero
 	
@@ -137,7 +137,7 @@ public final class SwipeDismissList implements View.OnTouchListener {
 		 * @param listView The originating {@link ListView}.
 		 * @param position The position of the item to dismiss.
 		 */
-		Undoable onDismiss(ListView listView, int position);
+		Undoable onDismiss(AbsListView listView, int position);
 	}
 
 	/**
@@ -182,7 +182,7 @@ public final class SwipeDismissList implements View.OnTouchListener {
 	 * @param callback The callback to trigger when the user has indicated that
 	 * she would like to dismiss one or more list items.
 	 */
-	public SwipeDismissList(ListView listView, OnDismissCallback callback) {
+	public SwipeDismissList(AbsListView listView, OnDismissCallback callback) {
 		this(listView, callback, UndoMode.SINGLE_UNDO);
 	}
 
@@ -194,7 +194,7 @@ public final class SwipeDismissList implements View.OnTouchListener {
 	 * she would like to dismiss one or more list items.
 	 * @param mode The mode this list handles multiple undos.
 	 */
-	public SwipeDismissList(ListView listView, OnDismissCallback callback, UndoMode mode) {
+	public SwipeDismissList(AbsListView listView, OnDismissCallback callback, UndoMode mode) {
 
 		if(listView == null) {
 			throw new IllegalArgumentException("listview must not be null.");
