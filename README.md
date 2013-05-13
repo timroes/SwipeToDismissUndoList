@@ -14,6 +14,10 @@ The source code of this demonstration app can be found in the [SwipteToDismissUn
 Changes
 -------
 
+*2013-05-13* Use `AbsListView` instead of `ListView` to make this library also available for GridViews
+
+**Changes required:** You need to change the parameter in the `onDismiss` method to `AbsListView` (see below).
+
 *2013-03-22* Added minimum SDK version to manifest
 
 *2013-02-24* Properly discard undo items (BUG FIX)
@@ -59,7 +63,7 @@ at least its `undo` method), that restores the element again:
 
 ```java
 SwipeDismissList.OnDismissCallback callback = new SwipeDismissList.OnDismissCallback() {
-	public SwipeDismissList.Undoable onDismiss(ListView listView, final int position) {
+	public SwipeDismissList.Undoable onDismiss(AbsListView listView, final int position) {
 		// Delete the item from your adapter (sample code):
 		final String itemToDelete = mAdapter.get(position);
 		mAdapter.remove(itemToDelete);
@@ -101,7 +105,7 @@ An (pseudo) example of a complete `OnDismissCallback`:
 ```java
 SwipeDismissList.OnDismissCallback callback = new SwipeDismissList.OnDismissCallback() {
 	// Gets called whenever the user deletes an item.
-	public SwipeDismissList.Undoable onDismiss(ListView listView, final int position) {
+	public SwipeDismissList.Undoable onDismiss(AbsListView listView, final int position) {
 		// Get your item from the adapter (mAdapter being an adapter for MyItem objects)
 		final MyItem deletedItem = mAdapter.getItem(position);
 		// Delete item from adapter
