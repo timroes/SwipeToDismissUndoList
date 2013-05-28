@@ -17,6 +17,7 @@ package de.timroes.swipetodismiss;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.view.Gravity;
@@ -86,6 +87,7 @@ public final class SwipeDismissList implements View.OnTouchListener {
 	private TextView mUndoText;
 	private Button mUndoButton;
 
+	private SwipeDirection mSwipeDirection = SwipeDirection.BOTH;
 	private int mAutoHideDelay = 5000;
 	private String mDeleteString = "Item deleted";
 	private String mDeleteMultipleString = "%d items deleted";
@@ -123,6 +125,33 @@ public final class SwipeDismissList implements View.OnTouchListener {
 		COLLAPSED_UNDO
 	};
 	
+	/**
+	 * Defines the direction in which the swipe to delete can be done. The default
+	 * is {@link SwipeDirection#BOTH}. Use {@link #setSwipeDirection(de.timroes.swipetodismiss.SwipeDismissList.SwipeDirection)}
+	 * to set the direction.
+	 */
+	public enum SwipeDirection {
+		/**
+		 * The user can swipe each item into both directions (left and right)
+		 * to delete it.
+		 */
+		BOTH,
+		/**
+		 * The user can only swipe the items to the beginning of the item to
+		 * delete it. The start of an item is in Left-To-Right languages the left
+		 * side and in Right-To-Left languages the right side. Before API level
+		 * 17 this is always the left side.
+		 */
+		START,
+		/**
+		 * The user can only swipe the items to the end of the item to delete it.
+		 * This is in Left-To-Right languages the right side in Right-To-Left
+		 * languages the left side. Before API level 17 this will always be the
+		 * right side.
+		 */
+		END
+	}
+
 	/**
 	 * The callback interface used by {@link SwipeDismissListViewTouchListener}
 	 * to inform its client about a successful dismissal of one or more list
@@ -279,6 +308,17 @@ public final class SwipeDismissList implements View.OnTouchListener {
 	}
 
 	/**
+	 * Sets the directions in which a list item can be swiped to delete.
+	 * By default this is set to {@link SwipeDirection#BOTH} so that an item
+	 * can be swiped into both directions.
+	 *
+	 * @param direction The direction to limit the swipe to.
+	 */
+	public void setSwipeDirection(SwipeDirection direction) {
+		mSwipeDirection = direction;
+	}
+
+	/**
 	 * Sets the string shown in the undo popup. This will only show if
 	 * the {@link Undoable} returned by the {@link OnDismissCallback} returns
 	 * {@code null} from its {@link Undoable#getTitle()} method.
@@ -391,11 +431,12 @@ public final class SwipeDismissList implements View.OnTouchListener {
 				float velocityY = Math.abs(mVelocityTracker.getYVelocity());
 				boolean dismiss = false;
 				boolean dismissRight = false;
-				if (Math.abs(deltaX) > mViewWidth / 2) {
+				if (Math.abs(deltaX) > mViewWidth / 2 && mSwiping) {
 					dismiss = true;
 					dismissRight = deltaX > 0;
 				} else if (mMinFlingVelocity <= velocityX && velocityX <= mMaxFlingVelocity
-					&& velocityY < velocityX) {
+					&& velocityY < velocityX && mSwiping && isDirectionValid(mVelocityTracker.getXVelocity())
+					&& deltaX >= mViewWidth * 0.2f) {
 					dismiss = true;
 					dismissRight = mVelocityTracker.getXVelocity() > 0;
 				}
@@ -444,16 +485,24 @@ public final class SwipeDismissList implements View.OnTouchListener {
 
 				mVelocityTracker.addMovement(motionEvent);
 				float deltaX = motionEvent.getRawX() - mDownX;
-				if (Math.abs(deltaX) > mSlop) {
-					mSwiping = true;
-					mListView.requestDisallowInterceptTouchEvent(true);
+				// Only start swipe in correct direction
+				if(isDirectionValid(deltaX)) {
+					if (Math.abs(deltaX) > mSlop) {
+						mSwiping = true;
+						mListView.requestDisallowInterceptTouchEvent(true);
 
-					// Cancel ListView's touch (un-highlighting the item)
-					MotionEvent cancelEvent = MotionEvent.obtain(motionEvent);
-					cancelEvent.setAction(MotionEvent.ACTION_CANCEL
-						| (motionEvent.getActionIndex()
-						<< MotionEvent.ACTION_POINTER_INDEX_SHIFT));
-					mListView.onTouchEvent(cancelEvent);
+						// Cancel ListView's touch (un-highlighting the item)
+						MotionEvent cancelEvent = MotionEvent.obtain(motionEvent);
+						cancelEvent.setAction(MotionEvent.ACTION_CANCEL
+							| (motionEvent.getActionIndex()
+							<< MotionEvent.ACTION_POINTER_INDEX_SHIFT));
+						mListView.onTouchEvent(cancelEvent);
+					}
+				} else {
+					// If we swiped into wrong direction, act like this was the new
+					// touch down point
+					mDownX = motionEvent.getRawX();
+					deltaX = 0;
 				}
 
 				if (mSwiping) {
@@ -466,6 +515,37 @@ public final class SwipeDismissList implements View.OnTouchListener {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Checks whether the delta of a swipe indicates, that the swipe is in the
+	 * correct direction, regarding the direction set via
+	 * {@link #setSwipeDirection(de.timroes.swipetodismiss.SwipeDismissList.SwipeDirection)}
+	 *
+	 * @param deltaX The delta of x coordinate of the swipe.
+	 * @return Whether the delta of a swipe is in the right direction.
+	 */
+	private boolean isDirectionValid(float deltaX) {
+
+		int rtlSign = 1;
+		// On API level 17 and above, check if we are in a Right-To-Left layout
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+			if(mListView.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL) {
+				rtlSign = -1;
+			}
+		}
+
+		// Check if swipe has been done in the corret direction
+		switch(mSwipeDirection) {
+			default:
+			case BOTH:
+				return true;
+			case START:
+				return rtlSign * deltaX < 0;
+			case END:
+				return rtlSign * deltaX > 0;
+		}
+
 	}
 
 	class PendingDismissData implements Comparable<PendingDismissData> {

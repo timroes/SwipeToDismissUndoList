@@ -14,6 +14,8 @@ The source code of this demonstration app can be found in the [SwipteToDismissUn
 Changes
 -------
 
+*2013-05-28* Introduced `setSwipeDirection` and improved detection of swipes.
+
 *2013-05-13* Use `AbsListView` instead of `ListView` to make this library also available for GridViews
 
 **Changes required:** You need to change the parameter in the `onDismiss` method to `AbsListView` (see below).
@@ -140,6 +142,12 @@ The undo popup will be hidden automatically after some time, after the user has
 touched the screen after the deletion. The delay until it will hide is by default
 5 seconds. You can change that value with the `setAutoHideDelay(int)` method,
 that takes a new delay in milliseconds. 
+
+## setSwipeDirection
+
+By default the user can swipe an item left or right to delete it. With this method
+you can limit it to the left or right side. See the Javadoc of `setSwipeDirection`
+and `SwipeDismissList.SwipeDirection` for further information.
 
 ## UndoMode
 
