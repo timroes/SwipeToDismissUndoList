@@ -93,6 +93,8 @@ public final class SwipeDismissList implements View.OnTouchListener {
 	private String mDeleteMultipleString = "%d items deleted";
 
 	private int mDelayedMsgId;
+	
+	private int swippingLayout;
 
 
 	/**
@@ -403,6 +405,13 @@ public final class SwipeDismissList implements View.OnTouchListener {
 					child = mListView.getChildAt(i);
 					child.getHitRect(rect);
 					if (rect.contains(x, y)) {
+						if (swippingLayout != 0) {
+							View swippingView = child.findViewById(swippingLayout);
+							if (swippingView != null) {
+								mDownView = swippingView;
+								break;
+							}
+						}
 						mDownView = child;
 						break;
 					}
@@ -660,6 +669,14 @@ public final class SwipeDismissList implements View.OnTouchListener {
 			msg = mListView.getResources().getString(R.string.undo);
 		}
 		mUndoButton.setText(msg);
+	}
+
+	public int getSwippingLayout() {
+		return swippingLayout;
+	}
+
+	public void setSwippingLayout(int swippingLayout) {
+		this.swippingLayout = swippingLayout;
 	}
 
 	/**
