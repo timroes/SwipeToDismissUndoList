@@ -78,6 +78,7 @@ public final class SwipeDismissList implements View.OnTouchListener {
 	private View mDownView;
 	private boolean mPaused;
 	private float mDensity;
+	private boolean mSwipeDisabled;
 
 	private UndoMode mMode;
 	private List<Undoable> mUndoActions;
@@ -93,7 +94,6 @@ public final class SwipeDismissList implements View.OnTouchListener {
 	private String mDeleteMultipleString = "%d items deleted";
 
 	private int mDelayedMsgId;
-
 
 	/**
 	 * Defines the mode a {@link SwipeDismissList} handles multiple undos.
@@ -472,6 +472,9 @@ public final class SwipeDismissList implements View.OnTouchListener {
 			}
 
 			case MotionEvent.ACTION_MOVE: {
+				if (this.mSwipeDisabled) {
+					return false;
+				}
 				
 				if(mUndoPopup.isShowing()) {	
 					// Send a delayed message to hide popup
@@ -722,4 +725,10 @@ public final class SwipeDismissList implements View.OnTouchListener {
 		
 	}
 	
+	/**
+	 * Enable/disable swipe.
+	 */
+	public void setSwipeDisabled(boolean disabled) {
+		this.mSwipeDisabled = disabled;
+	}
 }
