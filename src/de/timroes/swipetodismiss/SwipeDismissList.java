@@ -293,7 +293,7 @@ public final class SwipeDismissList implements View.OnTouchListener {
 	 *
 	 * @param enabled Whether or not to watch for gestures.
 	 */
-	public void setEnabled(boolean enabled) {
+	private void setEnabled(boolean enabled) {
 		mPaused = !enabled;
 	}
 
