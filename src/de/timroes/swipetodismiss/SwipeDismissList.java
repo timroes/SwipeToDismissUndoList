@@ -379,6 +379,10 @@ public final class SwipeDismissList implements View.OnTouchListener {
 
 	@Override
 	public boolean onTouch(View view, MotionEvent motionEvent) {
+		if (this.mSwipeDisabled) {
+			return false;
+		}
+				
 		if (mViewWidth < 2) {
 			mViewWidth = mListView.getWidth();
 		}
@@ -472,10 +476,6 @@ public final class SwipeDismissList implements View.OnTouchListener {
 			}
 
 			case MotionEvent.ACTION_MOVE: {
-				if (this.mSwipeDisabled) {
-					return false;
-				}
-				
 				if(mUndoPopup.isShowing()) {	
 					// Send a delayed message to hide popup
 					mHandler.sendMessageDelayed(mHandler.obtainMessage(mDelayedMsgId), 
