@@ -92,6 +92,7 @@ public final class SwipeDismissList implements View.OnTouchListener {
 	private int mAutoHideDelay = 5000;
 	private String mDeleteString = "Item deleted";
 	private String mDeleteMultipleString = "%d items deleted";
+	private boolean mTouchBeforeAutoHide = true;
 
 	private int mDelayedMsgId;
 
@@ -340,7 +341,16 @@ public final class SwipeDismissList implements View.OnTouchListener {
 	public void setUndoMultipleString(String msg) {
 		mDeleteMultipleString = msg;
 	}
-
+	
+	/**
+	 * Sets whether another touch on the view is required before the popup counts down to
+	 * dismiss. By default this is set to true.
+	 * 
+	 * @param require Whether a touch is required before starting the auto-dismiss timer.
+	 */
+	public void setRequireTouchBeforeDismiss(boolean require) {
+		mTouchBeforeAutoHide = require;
+	}
 
     /**
      * Discard all stored undos and hide the undo popup dialog.
@@ -476,7 +486,7 @@ public final class SwipeDismissList implements View.OnTouchListener {
 			}
 
 			case MotionEvent.ACTION_MOVE: {
-				if(mUndoPopup.isShowing()) {	
+				if(mTouchBeforeAutoHide && mUndoPopup.isShowing()) {	
 					// Send a delayed message to hide popup
 					mHandler.sendMessageDelayed(mHandler.obtainMessage(mDelayedMsgId), 
 						mAutoHideDelay);
@@ -607,6 +617,13 @@ public final class SwipeDismissList implements View.OnTouchListener {
 						mUndoPopup.showAtLocation(mListView, 
 							Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM,
 							0, (int)(mDensity * 15));
+						
+						// Queue the dismiss only if required
+						if(!mTouchBeforeAutoHide) {	
+							// Send a delayed message to hide popup
+							mHandler.sendMessageDelayed(mHandler.obtainMessage(mDelayedMsgId), 
+								mAutoHideDelay);
+						}
 					}
 
 					ViewGroup.LayoutParams lp;
