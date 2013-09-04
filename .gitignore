@@ -3,3 +3,7 @@ gen/
 local.properties
 nbandroid/
 private/
+build/
+.gradle
+**/*.swp
+*.iml
