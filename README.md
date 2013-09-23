@@ -1,6 +1,8 @@
 SwipeToDismissUndoList
 =======================
 
+_**This library is deprecated in favor of [EnhancedListView](https://github.com/timroes/EnhancedListView). I won't fix any bugs on this library anymore.**_
+
 The SwipeToDismissUndoList is a library to add swipe to dismiss functionality to
 a `ListView` and undo deletions again. The lib is based on 
 [Jake Wharton's SwipeToDismissNOA](https://github.com/JakeWharton/SwipeToDismissNOA)
