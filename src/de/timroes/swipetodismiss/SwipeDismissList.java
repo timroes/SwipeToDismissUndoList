@@ -397,6 +397,15 @@ public final class SwipeDismissList implements View.OnTouchListener {
 			mViewWidth = mListView.getWidth();
 		}
 
+		// Count headers to recalculate the list items index,
+		// otherwise deleting the last n elements
+		// (where n equals the quantity of headers of the list) causes a crash
+		int headers = 0;
+		if (mListView instanceof ListView) {
+			ListView myListView = (ListView)mListView;
+			headers = myListView.getHeaderViewsCount();
+		}
+		
 		switch (motionEvent.getActionMasked()) {
 			case MotionEvent.ACTION_DOWN: {
 				if (mPaused) {
@@ -408,12 +417,13 @@ public final class SwipeDismissList implements View.OnTouchListener {
 				// Find the child view that was touched (perform a hit test)
 				Rect rect = new Rect();
 				int childCount = mListView.getChildCount();
+				
 				int[] listViewCoords = new int[2];
 				mListView.getLocationOnScreen(listViewCoords);
 				int x = (int) motionEvent.getRawX() - listViewCoords[0];
 				int y = (int) motionEvent.getRawY() - listViewCoords[1];
 				View child;
-				for (int i = 0; i < childCount; i++) {
+				for (int i = headers; i < childCount; i++) {
 					child = mListView.getChildAt(i);
 					child.getHitRect(rect);
 					if (rect.contains(x, y)) {
@@ -424,7 +434,7 @@ public final class SwipeDismissList implements View.OnTouchListener {
 
 				if (mDownView != null) {
 					mDownX = motionEvent.getRawX();
-					mDownPosition = mListView.getPositionForView(mDownView);
+					mDownPosition = mListView.getPositionForView(mDownView) - headers;
 
 					mVelocityTracker = VelocityTracker.obtain();
 					mVelocityTracker.addMovement(motionEvent);
